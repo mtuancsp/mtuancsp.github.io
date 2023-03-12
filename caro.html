@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            display: flex;
+            align-items: center;
+            padding: 40px;
+        }
+
+        #board-container {
+            margin-right: 40px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            border: 1px solid black;
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 60px;
+        }
+
+        input[type="number"] {
+            width: 75px;
+        }
+
+        #mode-selection {
+            text-align: center;
+        }
+
+        form {
+
+        }
+
+    </style>
+</head>
+<body>
+<div id="mode-selection">
+    <h1>Select Game Mode</h1>
+    <button onclick="loadPvsP()">Player vs Player</button>
+    <button onclick="loadPvsC()">Player vs Computer</button>
+</div>
+
+<div id="container" style="display:none">
+    <div id="board-container"></div>
+    <div id="form-container">
+        <form>
+            <h1>Cờ Caro</h1>
+            <label for="player1-wins" id="player1-label" style="color: blue"></label>
+            <input type="number" id="player1-wins" name="player1-wins" value="0" readonly><br><br>
+            <label for="player2-wins" id="player2-label" style="color: red"></label>
+            <input type="number" id="player2-wins" name="player2-wins" value="0" readonly><br><br>
+            <button type="button" onclick="resetBoard()">Play new board</button>
+            <button type="button" onclick="resetHistory()">Clear history</button>
+            <br><br>
+            <button>Chuyển chế độ chơi</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function loadPvsP() {
+        document.getElementById("player1-label").innerHTML = "Player 1 Wins:";
+        document.getElementById("player2-label").innerHTML = "Player 2 Wins:";
+        document.getElementById("container").style.display = "flex";
+        document.getElementById("mode-selection").style.display = "none";
+        mode = "PvsP";
+        setupBoard()
+    }
+
+    function loadPvsC() {
+        document.getElementById("player1-label").innerHTML = "Người chơi:";
+        document.getElementById("player2-label").innerHTML = "&nbsp;&nbsp;Máy tính :&nbsp;";
+        document.getElementById("container").style.display = "flex";
+        document.getElementById("mode-selection").style.display = "none";
+        mode = "PvsC";
+        setupBoard();
+    }
+
+    let board = [];
+    let mode = "";
+    let currentPlayer = "X";
+    let lastMove = {};
+    let interval = null;
+
+    function computerPlay() {
+        if (mode === "PvsC" && currentPlayer === "O") {
+            computerMove(lastMove);
+        }
+    }
+
+    function setupBoard() {
+        let boards = "<table>";
+        for (let i = 0; i < 15; i++) {
+            boards += "<tr>";
+            for (let j = 0; j < 20; j++) {
+                boards += `<td id="${i}_${j}" onclick="xclick(this)"></td>`;
+            }
+            boards += "</tr>";
+        }
+        boards += "</table>";
+        document.getElementById('board-container').innerHTML = boards;
+        setArray()
+        setTimeout(() => alert(`Người chơi ${currentPlayer} đi trước!`), 100);
+        interval = setInterval(computerPlay, 200);
+    }
+
+    function setArray() {
+        for (let i = 0; i < 15; i++) {
+            board[i] = [];
+            for (let j = 0; j < 20; j++) {
+                board[i][j] = "";
+            }
+        }
+    }
+
+    function checkWin(row, col) {
+        // Check theo hàng
+        let count = 0;
+        let winCells = [];
+        for (let j = 0; j < 20; j++) {
+            if (board[row][j] === currentPlayer) {
+                count++;
+                winCells.push({row: row, col: j});
+                if (count === 5) {
+                    highlightCells(winCells);
+                    return true;
+                }
+            } else {
+                count = 0;
+                winCells = [];
+            }
+        }
+        // Check theo cột
+        count = 0;
+        winCells = [];
+        for (let i = 0; i < 15; i++) {
+            if (board[i][col] === currentPlayer) {
+                count++;
+                winCells.push({row: i, col: col});
+                if (count === 5) {
+                    highlightCells(winCells);
+                    return true;
+                }
+            } else {
+                count = 0;
+                winCells = [];
+            }
+        }
+        // Check đường chéo chính
+        count = 0;
+        winCells = [];
+        let i = row;
+        let j = col;
+        while (i > 0 && j > 0) {
+            i--;
+            j--;
+        }
+        while (i < 15 && j < 20) {
+            if (board[i][j] === currentPlayer) {
+                count++;
+                winCells.push({row: i, col: j});
+                if (count === 5) {
+                    highlightCells(winCells);
+                    return true;
+                }
+            } else {
+                count = 0;
+                winCells = [];
+            }
+            i++;
+            j++;
+        }
+        // Check đường chéo phụ
+        count = 0;
+        winCells = [];
+        i = row;
+        j = col;
+        while (i > 0 && j < 19) {
+            i--;
+            j++;
+        }
+        while (i < 15 && j >= 0) {
+            if (board[i][j] === currentPlayer) {
+                count++;
+                winCells.push({row: i, col: j});
+                if (count === 5) {
+                    highlightCells(winCells);
+                    return true;
+                }
+            } else {
+                count = 0;
+                winCells = [];
+            }
+            i++;
+            j--;
+        }
+
+        return false;
+    }
+
+    function highlightCells(cells) {
+        for (let cell of cells) {
+            const td = document.getElementById(`${cell.row}_${cell.col}`);
+            td.style.background = "orange";
+        }
+    }
+
+    function resetBoard() {
+        if (confirm('Bạn có muốn tạo lại bàn cờ mới không ?!')) {
+            switchPlayer();
+            setupBoard();
+        }
+    }
+
+    function resetHistory() {
+        if (confirm("Bạn có chắc chắn muốn xóa hết lịch sử không?! ")) {
+            document.getElementById("player1-wins").value = 0;
+            document.getElementById("player2-wins").value = 0;
+            resetBoard()
+        }
+    }
+
+
+    function xclick(td) {
+        if (td.innerHTML === "") {
+            const row = td.parentNode.rowIndex;
+            const col = td.cellIndex;
+            lastMove.row = row;
+            lastMove.col = col;
+            board[row][col] = currentPlayer;
+            td.innerHTML = currentPlayer;
+            if (currentPlayer === "X") {
+                td.style.color = "blue";
+            } else {
+                td.style.color = "red";
+            }
+            if (checkWin(row, col)) {
+                setTimeout(function () {
+                    alert(`Người chơi ${currentPlayer} đã thắng!`);
+                    clearInterval(interval);
+                    resetBoard();
+                }, 200);
+                if (currentPlayer === "X") {
+                    document.getElementById("player1-wins").value = parseInt(document.getElementById("player1-wins").value) + 1;
+                } else {
+                    document.getElementById("player2-wins").value = parseInt(document.getElementById("player2-wins").value) + 1;
+                }
+            } else {
+                switchPlayer();
+            }
+        }
+    }
+
+    function switchPlayer() {
+        if (currentPlayer === "X") {
+            currentPlayer = "O";
+        } else {
+            currentPlayer = "X";
+        }
+    }
+
+    function computerMove(lastMove) {
+        let bestMove = getBestMove(lastMove.row, lastMove.col);
+        board[bestMove.row][bestMove.col] = 'O';
+        let computerTd = document.getElementById(`${bestMove.row}_${bestMove.col}`);
+        computerTd.innerHTML = 'O';
+        computerTd.style.color = 'red';
+        if (checkWin(bestMove.row, bestMove.col)) {
+            setTimeout(function () {
+                alert(`Máy tính đã thắng!`);
+                resetBoard();
+            }, 200);
+            document.getElementById("player2-wins").value = parseInt(document.getElementById("player2-wins").value) + 1;
+        } else {
+            switchPlayer();
+        }
+    }
+
+    function getBestMove(row, col) {
+        let moves = [];
+        const radius = 1; // Phạm vi xung quanh ô cờ đã được chọn
+
+        // Lấy danh sách các ô cờ trong phạm vi xung quanh ô đã chọn
+        for (let i = -radius; i <= radius; i++) {
+            for (let j = -radius; j <= radius; j++) {
+                if (i !== 0 || j !== 0) {
+                    const r = row + i;
+                    const c = col + j;
+                    if (r >= 0 && r < 15 && c >= 0 && c < 20 && board[r][c] === "") {
+                        moves.push({row: r, col: c});
+                    }
+                }
+            }
+        }
+        const randomIndex = Math.floor(Math.random() * moves.length);
+        return moves[randomIndex];
+    }
+
+
+</script>
+
+</body>
+
+</html>
