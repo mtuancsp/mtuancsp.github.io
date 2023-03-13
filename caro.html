@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+
     <style>
 
         body {
             background-color: #bcfff7;
-            font-family: Arial, sans-serif;
+            font-family: Comfortaa, sans-serif;
         }
 
         #container {
@@ -20,12 +21,12 @@
             margin-right: 40px;
         }
 
-        table {
+        #board-container table {
             border-collapse: collapse;
             border: 3px solid gray;
         }
 
-        td {
+        #board-container td {
             width: 30px;
             height: 30px;
             text-align: center;
@@ -35,7 +36,7 @@
             cursor: pointer;
         }
 
-        td:hover {
+        #board-container td:hover {
             background-color: #ffe6e8;
         }
 
@@ -74,9 +75,8 @@
         }
 
         #mode-selection button:hover {
-            background-color: #3e8e41;
+            background-color: darkgreen;
         }
-
 
 
         #container {
@@ -92,7 +92,7 @@
             border: 2px solid #ddd;
             border-radius: 10px;
             text-align: center;
-            background-color: #f7f7f7;
+            background-color: #ffe6e8;
         }
 
         form {
@@ -100,13 +100,13 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            width: 280px;
+            width: 250px;
         }
 
         h1 {
             font-size: 3.5rem;
             color: #333;
-            text-shadow: 1px 1px #ddd;
+            text-shadow: 2px 2px #ddd;
         }
 
         label {
@@ -152,36 +152,53 @@
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
 
-
-
-
     </style>
+
 </head>
+
 <body>
+
 <div id="mode-selection">
     <img src="2.jpg" alt="image description">
     <h1>Select Game Mode</h1>
     <button onclick="loadPvsC()">Player vs Computer</button>
     <button onclick="loadPvsP()">Player vs Player</button>
-
 </div>
 
 <div id="container" style="display:none">
     <div id="board-container"></div>
     <div id="form-container">
         <form>
-            <h1><span style="color: red">Cờ</span> <span style="color: blue">Ca</span><span style="color: red">rô</span></h1>
-            <label for="player1-wins" id="player1-label" style="color: blue"></label>
-            <input type="text" id="player1-wins" name="player1-wins" value="0" style="color: blue" readonly><br>
-            <label for="player2-wins" id="player2-label" style="color: red"></label>
-            <input type="text" id="player2-wins" name="player2-wins" value="0" style="color: red" readonly><br>
+            <h1>
+                <span style="color: red">C</span><span style="color: blue">ờ</span>
+                <span style="color: red">C</span><span style="color: blue">a</span><span style="color: red">r</span><span style="color: blue">ô</span>
+            </h1>
+            <table>
+                <tr>
+                    <td rowspan="2" style="font-size: 60px; color: blue"><b>X</b></td>
+                    <td><label for="player1-wins" id="player1-label" style="color: blue"></label></td>
+                </tr>
+                <tr>
+                    <td><input type="text" id="player1-wins" name="player1-wins" value="0" style="color: blue" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="player2-wins" id="player2-label" style="color: red"></label></td>
+                    <td rowspan="2" style="font-size: 60px; color: red"><b>O</b></td>
+                </tr>
+                <tr>
+                    <td><input type="text" id="player2-wins" name="player2-wins" value="0" style="color: red"
+                               readonly><br></td>
+                </tr>
+            </table>
+            <br>
             <div>
                 <button type="button" onclick="undoMove()">Đi lại</button>
                 <button type="button" onclick="resetBoard()">Ván mới</button>
             </div>
             <div>
-                <button type="button" onclick="resetHistory()">Xóa lịch sử</button>
-                <button>Chuyển chế độ chơi</button>
+                <button type="button" onclick="resetHistory()">Xóa lịch sử đấu</button>
+                <button>Đổi chế độ chơi</button>
             </div>
         </form>
     </div>
@@ -331,12 +348,12 @@
     function highlightCells(cells) {
         for (let cell of cells) {
             const td = document.getElementById(`${cell.row}_${cell.col}`);
-            td.style.background = "orange";
+            td.style.background = "#ffa20a";
         }
     }
 
-    function undoMove(){
-        if(confirm('Bạn có muốn đi lại không ?!')){
+    function undoMove() {
+        if (confirm('Bạn có muốn đi lại không ?!')) {
             document.getElementById(`${lastMove.row}_${lastMove.col}`).innerHTML = "";
             switchPlayer();
         }
@@ -356,7 +373,6 @@
             resetBoard()
         }
     }
-
 
     function xclick(td) {
         if (td.innerHTML === "") {
@@ -432,7 +448,6 @@
         const randomIndex = Math.floor(Math.random() * moves.length);
         return moves[randomIndex];
     }
-
 
 </script>
 
