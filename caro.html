@@ -6,6 +6,7 @@
     <style>
 
         body {
+            background-color: #bcfff7;
             font-family: Arial, sans-serif;
         }
 
@@ -21,6 +22,7 @@
 
         table {
             border-collapse: collapse;
+            border: 3px solid gray;
         }
 
         td {
@@ -30,11 +32,11 @@
             border: 1px solid black;
             font-size: 25px;
             font-weight: bold;
+            cursor: pointer;
         }
 
-        h1 {
-            text-align: center;
-            font-size: 60px;
+        td:hover {
+            background-color: #ffe6e8;
         }
 
         input[type="number"] {
@@ -42,43 +44,153 @@
         }
 
         #mode-selection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #mode-selection h1 {
+            font-size: 4rem;
             text-align: center;
+            color: #333;
+            text-shadow: 2px 2px #ddd;
+            margin-bottom: 2rem;
+        }
+
+
+        #mode-selection button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 24px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease-in-out;
+        }
+
+        #mode-selection button:hover {
+            background-color: #3e8e41;
+        }
+
+
+
+        #container {
+            display: flex;
+            align-items: center;
+            padding: 40px;
+        }
+
+        #form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            background-color: #f7f7f7;
         }
 
         form {
-
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 280px;
         }
+
+        h1 {
+            font-size: 3.5rem;
+            color: #333;
+            text-shadow: 1px 1px #ddd;
+        }
+
+        label {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        input[type=text] {
+            font-size: 1.2rem;
+            width: 60px;
+            text-align: center;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 1px 1px #ddd;
+            background-color: #fff;
+            color: #333;
+        }
+
+        button {
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 1px 1px #ddd;
+            background-color: #ffa20a;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #c62828;
+        }
+
+        img {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            transition: box-shadow 0.3s ease-in-out;
+        }
+
+        img:hover {
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+
+
 
     </style>
 </head>
 <body>
 <div id="mode-selection">
+    <img src="2.jpg" alt="image description">
     <h1>Select Game Mode</h1>
-    <button onclick="loadPvsP()">Player vs Player</button>
     <button onclick="loadPvsC()">Player vs Computer</button>
+    <button onclick="loadPvsP()">Player vs Player</button>
+
 </div>
 
 <div id="container" style="display:none">
     <div id="board-container"></div>
     <div id="form-container">
         <form>
-            <h1>Cờ Caro</h1>
+            <h1><span style="color: red">Cờ</span> <span style="color: blue">Ca</span><span style="color: red">rô</span></h1>
             <label for="player1-wins" id="player1-label" style="color: blue"></label>
-            <input type="number" id="player1-wins" name="player1-wins" value="0" readonly><br><br>
+            <input type="text" id="player1-wins" name="player1-wins" value="0" style="color: blue" readonly><br>
             <label for="player2-wins" id="player2-label" style="color: red"></label>
-            <input type="number" id="player2-wins" name="player2-wins" value="0" readonly><br><br>
-            <button type="button" onclick="resetBoard()">Play new board</button>
-            <button type="button" onclick="resetHistory()">Clear history</button>
-            <br><br>
-            <button>Chuyển chế độ chơi</button>
+            <input type="text" id="player2-wins" name="player2-wins" value="0" style="color: red" readonly><br>
+            <div>
+                <button type="button" onclick="undoMove()">Đi lại</button>
+                <button type="button" onclick="resetBoard()">Ván mới</button>
+            </div>
+            <div>
+                <button type="button" onclick="resetHistory()">Xóa lịch sử</button>
+                <button>Chuyển chế độ chơi</button>
+            </div>
         </form>
     </div>
 </div>
 
 <script>
     function loadPvsP() {
-        document.getElementById("player1-label").innerHTML = "Player 1 Wins:";
-        document.getElementById("player2-label").innerHTML = "Player 2 Wins:";
+        document.getElementById("player1-label").innerHTML = "Người chơi 1";
+        document.getElementById("player2-label").innerHTML = "Người chơi 2";
         document.getElementById("container").style.display = "flex";
         document.getElementById("mode-selection").style.display = "none";
         mode = "PvsP";
@@ -86,8 +198,8 @@
     }
 
     function loadPvsC() {
-        document.getElementById("player1-label").innerHTML = "Người chơi:";
-        document.getElementById("player2-label").innerHTML = "&nbsp;&nbsp;Máy tính :&nbsp;";
+        document.getElementById("player1-label").innerHTML = "Người chơi";
+        document.getElementById("player2-label").innerHTML = "Máy tính";
         document.getElementById("container").style.display = "flex";
         document.getElementById("mode-selection").style.display = "none";
         mode = "PvsC";
@@ -220,6 +332,13 @@
         for (let cell of cells) {
             const td = document.getElementById(`${cell.row}_${cell.col}`);
             td.style.background = "orange";
+        }
+    }
+
+    function undoMove(){
+        if(confirm('Bạn có muốn đi lại không ?!')){
+            document.getElementById(`${lastMove.row}_${lastMove.col}`).innerHTML = "";
+            switchPlayer();
         }
     }
 
