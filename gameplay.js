@@ -1,34 +1,10 @@
-function loadPvsP() {
-    document.getElementById("player1-label").innerHTML = "Người chơi 1";
-    document.getElementById("player2-label").innerHTML = "Người chơi 2";
-    document.getElementById("container").style.display = "flex";
-    document.getElementById("mode-selection").style.display = "none";
-    mode = "PvsP";
-    setupBoard()
-}
-
-function loadPvsC() {
-    document.getElementById("player1-label").innerHTML = "Người chơi";
-    document.getElementById("player2-label").innerHTML = "Máy tính";
-    document.getElementById("container").style.display = "flex";
-    document.getElementById("mode-selection").style.display = "none";
-    mode = "PvsC";
-    setupBoard();
-}
 
 let board = [];
 let rows = 15;
-let cols = 20;
+let cols = 23;
 let mode = "";
 let currentPlayer = "X";
 let lastMove = {};
-let interval = null;
-
-function computerPlay() {
-    if (mode === "PvsC" && currentPlayer === "O") {
-        computerMove(lastMove);
-    }
-}
 
 function setupBoard() {
     let boards = "<table>";
@@ -42,8 +18,7 @@ function setupBoard() {
     boards += "</table>";
     document.getElementById('board-container').innerHTML = boards;
     setArray()
-    setTimeout(() => alert(`Người chơi ${currentPlayer} đi trước!`), 100);
-    interval = setInterval(computerPlay, 200);
+    setTimeout(() => {alert(`Người chơi ${currentPlayer} đi trước!`);computerPlay()}, 200);
 }
 
 function setArray() {
@@ -54,6 +29,32 @@ function setArray() {
         }
     }
 }
+
+function switchPlayer() {
+    currentPlayer = (currentPlayer === "X") ? "O" : "X";
+}
+
+function undoMove() {
+    if (confirm('Bạn có muốn đi lại không ?!')) {
+        document.getElementById(`${lastMove.row}_${lastMove.col}`).innerHTML = "";
+        switchPlayer();
+    }
+}
+
+function resetBoard() {
+    if (confirm('Bạn có muốn tạo lại bàn cờ mới không ?!')) {
+        setupBoard();
+    }
+}
+
+function resetHistory() {
+    if (confirm("Bạn có chắc chắn muốn xóa hết lịch sử không?! ")) {
+        document.getElementById("player1-wins").value = 0;
+        document.getElementById("player2-wins").value = 0;
+        resetBoard()
+    }
+}
+
 
 function checkWin(row, col) {
     // Check theo hàng
@@ -148,31 +149,10 @@ function checkWin(row, col) {
 function highlightCells(cells) {
     for (let cell of cells) {
         const td = document.getElementById(`${cell.row}_${cell.col}`);
-        td.style.background = "#ffa20a";
+        td.style.background = "orange";
     }
 }
 
-function undoMove() {
-    if (confirm('Bạn có muốn đi lại không ?!')) {
-        document.getElementById(`${lastMove.row}_${lastMove.col}`).innerHTML = "";
-        switchPlayer();
-    }
-}
-
-function resetBoard() {
-    if (confirm('Bạn có muốn tạo lại bàn cờ mới không ?!')) {
-        switchPlayer();
-        setupBoard();
-    }
-}
-
-function resetHistory() {
-    if (confirm("Bạn có chắc chắn muốn xóa hết lịch sử không?! ")) {
-        document.getElementById("player1-wins").value = 0;
-        document.getElementById("player2-wins").value = 0;
-        resetBoard()
-    }
-}
 
 function xclick(td) {
     if (td.innerHTML === "") {
@@ -190,7 +170,7 @@ function xclick(td) {
         if (checkWin(row, col)) {
             setTimeout(function () {
                 alert(`Người chơi ${currentPlayer} đã thắng!`);
-                clearInterval(interval);
+                switchPlayer();
                 resetBoard();
             }, 200);
             if (currentPlayer === "X") {
@@ -200,15 +180,14 @@ function xclick(td) {
             }
         } else {
             switchPlayer();
+            computerPlay();
         }
     }
 }
 
-function switchPlayer() {
-    if (currentPlayer === "X") {
-        currentPlayer = "O";
-    } else {
-        currentPlayer = "X";
+function computerPlay() {
+    if (mode === "PvsC" && currentPlayer === "O") {
+        computerMove(lastMove);
     }
 }
 
@@ -229,23 +208,70 @@ function computerMove(lastMove) {
     }
 }
 
+
 function getBestMove(row, col) {
     let moves = [];
 
-
-    // Lấy danh sách các ô cờ trong phạm vi xung quanh ô vừa đánh
+    // Check phạm vi 3x3
     for (let i = -1; i <= 1; i++) {
         for (let j = -1; j <= 1; j++) {
             if (i !== 0 || j !== 0) {
                 const r = row + i;
                 const c = col + j;
-                if (r >= 0 && r < 15 && c >= 0 && c < 20 && board[r][c] === "") {
-                    moves.push({row: r, col: c});
+                let r2;
+                let c2
+                if (r >= 0 && r < 15 && c >= 0 && c < 20 && board[r][c] === "X") {
+                    if (r + i >= 0 && r + i < 15 && c + j >= 0 && c + j < 20 && board[r + i][c + j] === "X"){
+                        r2 = row - i;
+                        c2 = col - j;
+                    } else
+                    if (row - i >= 0 && row - i < 15 && col - j >= 0 && col - j < 20 && board[row - i][col - j] === "X"){
+                        r2 = row - i-i;
+                        c2 = col - j-j;
+                    }
+                    if (r2 >= 0 && r2 < 15 && c2 >= 0 && c2 < 20 && board[r2][c2] === "") {
+                        return {row: r2, col: c2};
+                    }
                 }
             }
         }
     }
+
+    // Check phạm vi 5x5
+        for (let i = -2; i <= 2; i++) {
+            for (let j = -2; j <= 2; j++) {
+                if (i !== 0 || j !== 0) {
+                    const r = row + i + i;
+                    const c = col + j + + j;
+                    if (r >= 0 && r < 15 && c >= 0 && c < 20 && board[r][c] === "X") {
+                        const r2 = row + i;
+                        const c2 = col + j;
+                        if (r2 >= 0 && r2 < 15 && c2 >= 0 && c2 < 20 && board[r2][c2] === "") {
+                            return {row: r2, col: c2};
+                        }
+                    }
+                }
+            }
+        }
+
+    // Nếu không có thì chọn ngẫu nhiên
+    for (let i = -1; i <= 1; i++) {
+        for (let j = -1; j <= 1; j++) {
+            const r = row + i;
+            const c = col + j;
+            if (r >= 0 && r < 15 && c >= 0 && c < 20 && board[r][c] === "") {
+                moves.push({row: r, col: c});
+            }
+        }
+    }
+
     const randomIndex = Math.floor(Math.random() * moves.length);
-    return moves[randomIndex];
+    const randomRow = moves[randomIndex].row;
+    const randomCol = moves[randomIndex].col;
+    return {row: randomRow, col: randomCol};
+
 }
+
+
+
 

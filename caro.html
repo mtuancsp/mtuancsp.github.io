@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <title>Title</title>
 
-    <script src="test.js"></script>
     <link rel="stylesheet" href="css.css">
+    <script src="gameplay.js"></script>
+    <script src="display.js"></script>
 
 </head>
 
@@ -16,6 +17,40 @@
     <h1>Select Game Mode</h1>
     <button onclick="loadPvsC()">Player vs Computer</button>
     <button onclick="loadPvsP()">Player vs Player</button>
+    <div id="info">
+        <button id="rules-button" onclick="showRules()"><b>?</b></button>
+        <button id="info-button" onclick="showInfo()"><b>!</b></button>
+    </div>
+
+</div>
+
+<div id="rules-modal" class="modal">
+    <pre>
+        <span style="font-size: 50px" class="close" onclick="hideRules()">&times;</span>
+                            <b style="font-size: 35px">Luật chơi</b>
+
+        Game được chơi trên một bàn cờ kích thước 15x24.
+
+        Hai người chơi lần lượt đánh <b style="color: blue">X</b> và <b style="color: red">O</b> vào các ô còn trống.
+
+        Người chơi nào đạt được <span style="background-color: #ffa20a">5 ô liên tiếp</span> trên một hàng ngang,
+
+        dọc hoặc đường chéo sẽ giành chiến thắng.
+    </pre>
+</div>
+
+<div id="info-modal" class="modal">
+    <pre>
+            <span style="font-size: 50px" class="close" onclick="hideInfo()">&times;</span>
+                <b>Mọi ý kiến đóng góp vui lòng liên hệ</b>
+
+                    Phạm Minh Tuấn
+                    Phone: 0967726797
+                    Email: minhtuan267@gmail.com
+                    Codegym Mỹ Đình
+                    Lớp C0223G1
+
+    </pre>
 </div>
 
 <div id="container" style="display:none">
@@ -24,7 +59,8 @@
         <form>
             <h1>
                 <span style="color: red">C</span><span style="color: blue">ờ</span>
-                <span style="color: red">C</span><span style="color: blue">a</span><span style="color: red">r</span><span style="color: blue">ô</span>
+                <span style="color: red">C</span><span style="color: blue">a</span><span
+                    style="color: red">r</span><span style="color: blue">ô</span>
             </h1>
             <table>
                 <tr>
@@ -32,14 +68,16 @@
                     <td><label for="player1-wins" id="player1-label" style="color: blue"></label></td>
                 </tr>
                 <tr>
-                    <td><input type="text" id="player1-wins" name="player1-wins" value="0" style="color: blue" readonly></td>
+                    <td><input type="text" id="player1-wins" name="player1-wins" value="0" style="color: blue" readonly>
+                    </td>
                 </tr>
                 <tr>
                     <td><label for="player2-wins" id="player2-label" style="color: red"></label></td>
                     <td rowspan="2" style="font-size: 60px; color: red"><b>O</b></td>
                 </tr>
                 <tr>
-                    <td><input type="text" id="player2-wins" name="player2-wins" value="0" style="color: red" readonly><br></td>
+                    <td><input type="text" id="player2-wins" name="player2-wins" value="0" style="color: red"
+                               readonly><br></td>
                 </tr>
             </table>
             <br>
@@ -48,8 +86,8 @@
                 <button type="button" onclick="resetBoard()">Ván mới</button>
             </div>
             <div>
-                <button type="button" onclick="resetHistory()">Xóa lịch sử đấu</button>
-                <button>Đổi chế độ chơi</button>
+                <button type="button" onclick="resetHistory()">&nbsp;Xóa lịch sử đấu</button>
+                <button>&nbsp;Đổi chế độ chơi</button>
             </div>
         </form>
     </div>
