@@ -7,6 +7,11 @@ function loadPvsP() {
     setupBoard()
 }
 
+function showDifficulty() {
+    document.querySelector("#mode").style.display = "none";
+    document.querySelector("#pvsc-difficulty").style.display = "block";
+}
+
 function loadPvsC() {
     document.getElementById("player1-label").innerHTML = "Người chơi";
     document.getElementById("player2-label").innerHTML = "Máy tính";

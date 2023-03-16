@@ -18,7 +18,12 @@ function setupBoard() {
     boards += "</table>";
     document.getElementById('board-container').innerHTML = boards;
     setArray()
-    setTimeout(() => {alert(`Người chơi ${currentPlayer} đi trước!`);computerPlay()}, 200);
+
+    if ( mode === "PvsC" && currentPlayer === "O"){
+        setTimeout(() => {alert(`Máy tính đi trước!`);computerPlay()}, 200);
+    } else {
+        setTimeout(() => alert(`Người chơi ${currentPlayer} đi trước!`), 200);
+    }
 }
 
 function setArray() {
@@ -192,7 +197,7 @@ function computerPlay() {
 }
 
 function computerMove(lastMove) {
-    let bestMove = getBestMove(lastMove.row, lastMove.col);
+    let bestMove = getComMove(lastMove.row, lastMove.col);
     board[bestMove.row][bestMove.col] = 'O';
     let computerTd = document.getElementById(`${bestMove.row}_${bestMove.col}`);
     computerTd.innerHTML = 'O';
@@ -209,7 +214,7 @@ function computerMove(lastMove) {
 }
 
 
-function getBestMove(row, col) {
+function getComMove(row, col) {
     let moves = [];
 
     // Check phạm vi 3x3
@@ -228,6 +233,10 @@ function getBestMove(row, col) {
                     if (row - i >= 0 && row - i < 15 && col - j >= 0 && col - j < 20 && board[row - i][col - j] === "X"){
                         r2 = row - i-i;
                         c2 = col - j-j;
+                    } else
+                    if (row - i >= 0 && row - i < 15 && col - j >= 0 && col - j < 20 && board[row - i][col - j] === ""){
+                        r2 = row - i;
+                        c2 = col - j;
                     }
                     if (r2 >= 0 && r2 < 15 && c2 >= 0 && c2 < 20 && board[r2][c2] === "") {
                         return {row: r2, col: c2};

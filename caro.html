@@ -15,13 +15,19 @@
 <div id="mode-selection">
     <img src="2.jpg" alt="image description">
     <h1>Select Game Mode</h1>
-    <button onclick="loadPvsC()">Player vs Computer</button>
-    <button onclick="loadPvsP()">Player vs Player</button>
+    <div id="mode">
+        <button onclick="showDifficulty()">Player vs Computer</button>
+        <button onclick="loadPvsP()">Player vs Player</button>
+    </div>
+    <div id="pvsc-difficulty" style="display:none;">
+        <button onclick="loadPvsC()">Dễ</button>
+        <button onclick="loadPvsC()">Trung bình</button>
+        <button onclick="loadPvsC()">Khó</button>
+    </div>
     <div id="info">
         <button id="rules-button" onclick="showRules()"><b>?</b></button>
         <button id="info-button" onclick="showInfo()"><b>!</b></button>
     </div>
-
 </div>
 
 <div id="rules-modal" class="modal">
