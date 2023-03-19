@@ -56,7 +56,7 @@ function resetHistory() {
     if (confirm("Bạn có chắc chắn muốn xóa hết lịch sử không?! ")) {
         document.getElementById("player1-wins").value = 0;
         document.getElementById("player2-wins").value = 0;
-        resetBoard()
+        setTimeout(()=>resetBoard(),200);
     }
 }
 
@@ -225,20 +225,20 @@ function getComMove(row, col) {
                 const c = col + j;
                 let r2;
                 let c2
-                if (r >= 0 && r < 15 && c >= 0 && c < 20 && board[r][c] === "X") {
-                    if (r + i >= 0 && r + i < 15 && c + j >= 0 && c + j < 20 && board[r + i][c + j] === "X"){
+                if (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === "X") {
+                    if (r + i >= 0 && r + i < rows && c + j >= 0 && c + j < cols && board[r + i][c + j] === "X"){
                         r2 = row - i;
                         c2 = col - j;
                     } else
-                    if (row - i >= 0 && row - i < 15 && col - j >= 0 && col - j < 20 && board[row - i][col - j] === "X"){
+                    if (row - i >= 0 && row - i < rows && col - j >= 0 && col - j < cols && board[row - i][col - j] === "X"){
                         r2 = row - i-i;
                         c2 = col - j-j;
                     } else
-                    if (row - i >= 0 && row - i < 15 && col - j >= 0 && col - j < 20 && board[row - i][col - j] === ""){
+                    if (row - i >= 0 && row - i < rows && col - j >= 0 && col - j < cols && board[row - i][col - j] === ""){
                         r2 = row - i;
                         c2 = col - j;
                     }
-                    if (r2 >= 0 && r2 < 15 && c2 >= 0 && c2 < 20 && board[r2][c2] === "") {
+                    if (r2 >= 0 && r2 < rows && c2 >= 0 && c2 < cols && board[r2][c2] === "") {
                         return {row: r2, col: c2};
                     }
                 }
@@ -252,10 +252,10 @@ function getComMove(row, col) {
                 if (i !== 0 || j !== 0) {
                     const r = row + i + i;
                     const c = col + j + + j;
-                    if (r >= 0 && r < 15 && c >= 0 && c < 20 && board[r][c] === "X") {
+                    if (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === "X") {
                         const r2 = row + i;
                         const c2 = col + j;
-                        if (r2 >= 0 && r2 < 15 && c2 >= 0 && c2 < 20 && board[r2][c2] === "") {
+                        if (r2 >= 0 && r2 < rows && c2 >= 0 && c2 < cols && board[r2][c2] === "") {
                             return {row: r2, col: c2};
                         }
                     }
@@ -268,7 +268,7 @@ function getComMove(row, col) {
         for (let j = -1; j <= 1; j++) {
             const r = row + i;
             const c = col + j;
-            if (r >= 0 && r < 15 && c >= 0 && c < 20 && board[r][c] === "") {
+            if (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === "") {
                 moves.push({row: r, col: c});
             }
         }
